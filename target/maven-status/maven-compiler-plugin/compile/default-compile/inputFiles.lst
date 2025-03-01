@@ -1,0 +1,7 @@
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\DicomProcessorApplication.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\entities\DicomFile.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\exceptions\DicomFileReadException.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\filters\DatabaseFileFilter.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\repositories\DicomFileRepository.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\services\DicomFileService.java
+C:\Developpement\Workspaces\Java\dicom-processor\src\main\java\fr\kevpdev\dicom_processor\WatcherConfig.java
