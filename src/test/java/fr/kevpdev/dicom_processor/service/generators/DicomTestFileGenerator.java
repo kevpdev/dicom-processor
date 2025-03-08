@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.services.generators;
+package fr.kevpdev.dicom_processor.service.generators;
 
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;

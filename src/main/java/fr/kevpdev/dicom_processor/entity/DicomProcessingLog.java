@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.entities;
+package fr.kevpdev.dicom_processor.entity;
 
 
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 
 @Data
 @Entity(name = "dicom_files_processing_log")
-public class DicomFileProcessingLog {
+public class DicomProcessingLog {
 
     @Id
     private String sopInstanceUID;
