@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.service;
+package fr.kevpdev.dicom_processor.service.extractor;
 
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
 import fr.kevpdev.dicom_processor.exception.DicomFileReadException;

@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.service;
+package fr.kevpdev.dicom_processor.service.io;
 
 import fr.kevpdev.dicom_processor.config.PropertyConfig;
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
@@ -6,6 +6,8 @@ import fr.kevpdev.dicom_processor.exception.DicomFileReadException;
 import fr.kevpdev.dicom_processor.exception.DicomFileWriteException;
 import fr.kevpdev.dicom_processor.factory.DicomInputStreamFactory;
 import fr.kevpdev.dicom_processor.factory.DicomOutputStreamFactory;
+import fr.kevpdev.dicom_processor.service.image.DicomImageService;
+import fr.kevpdev.dicom_processor.service.rules.DicomMetaDataRulesService;
 import fr.kevpdev.dicom_processor.util.DicomFileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -153,7 +155,7 @@ public class DicomIOService {
      * @param suffix Suffix
      * @return File name with suffix
      */
-    private String addSuffixToFileName(String fileName, String suffix) {
+    public String addSuffixToFileName(String fileName, String suffix) {
         return fileName.replaceAll("\\.dcm$", "_" + suffix + ".dcm");
     }
 }

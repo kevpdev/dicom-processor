@@ -1,5 +1,6 @@
 package fr.kevpdev.dicom_processor.service;
 
+import fr.kevpdev.dicom_processor.service.rules.DicomMetaDataRulesService;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;

@@ -1,9 +1,9 @@
 package fr.kevpdev.dicom_processor.config;
 
-import fr.kevpdev.dicom_processor.service.DicomIOService;
-import fr.kevpdev.dicom_processor.service.DicomMetaDataRulesService;
+import fr.kevpdev.dicom_processor.service.io.DicomIOService;
+import fr.kevpdev.dicom_processor.service.rules.DicomMetaDataRulesService;
 import fr.kevpdev.dicom_processor.service.DicomProcessingLogService;
-import fr.kevpdev.dicom_processor.service.MetaDataExtractorService;
+import fr.kevpdev.dicom_processor.service.extractor.MetaDataExtractorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;

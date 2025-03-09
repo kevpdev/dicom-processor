@@ -2,7 +2,7 @@ package fr.kevpdev.dicom_processor.entity;
 
 public enum EStatus {
     SUCCESS("SUCCESS"),
-    IGNORED("IGNORED"),
+    IN_PROGRESS("IN_PROGRESS"),
     ERROR("ERROR");
 
     private final String value;

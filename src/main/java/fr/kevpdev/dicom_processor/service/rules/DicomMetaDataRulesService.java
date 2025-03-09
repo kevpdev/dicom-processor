@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.service;
+package fr.kevpdev.dicom_processor.service.rules;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,7 +1,8 @@
-package fr.kevpdev.dicom_processor.service;
+package fr.kevpdev.dicom_processor.service.image;
 
 import fr.kevpdev.dicom_processor.config.PropertyConfig;
 import fr.kevpdev.dicom_processor.exception.DicomFileWriteException;
+import fr.kevpdev.dicom_processor.service.image.converter.DicomImageConverterService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.Attributes;

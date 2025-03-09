@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.service;
+package fr.kevpdev.dicom_processor.service.image.converter;
 
 import fr.kevpdev.dicom_processor.exception.InvalidDicomMetadataException;
 import org.apache.logging.log4j.LogManager;
