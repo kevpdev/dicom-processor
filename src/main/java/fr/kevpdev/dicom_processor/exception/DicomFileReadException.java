@@ -1,6 +1,8 @@
-package fr.kevpdev.dicom_processor.exceptions;
+package fr.kevpdev.dicom_processor.exception;
 
-public class DicomFileReadException extends Exception{
+import java.io.IOException;
+
+public class DicomFileReadException extends IOException {
 
     public DicomFileReadException(String message) {
         super(message);

@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.exceptions;
+package fr.kevpdev.dicom_processor.exception;
 
 public class InvalidDicomFileException extends RuntimeException{
     public InvalidDicomFileException(String message) {

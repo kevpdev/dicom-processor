@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.dtos;
+package fr.kevpdev.dicom_processor.dto;
 
 import java.io.File;
 

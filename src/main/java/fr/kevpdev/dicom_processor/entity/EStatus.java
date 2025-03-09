@@ -1,4 +1,4 @@
-package fr.kevpdev.dicom_processor.entities;
+package fr.kevpdev.dicom_processor.entity;
 
 public enum EStatus {
     SUCCESS("SUCCESS"),
