@@ -1,9 +1,9 @@
 package fr.kevpdev.dicom_processor.config;
 
-import fr.kevpdev.dicom_processor.service.DicomIOService;
-import fr.kevpdev.dicom_processor.service.DicomMetaDataRulesService;
+import fr.kevpdev.dicom_processor.service.io.DicomIOService;
+import fr.kevpdev.dicom_processor.service.rules.DicomMetaDataRulesService;
 import fr.kevpdev.dicom_processor.service.DicomProcessingLogService;
-import fr.kevpdev.dicom_processor.service.MetaDataExtractorService;
+import fr.kevpdev.dicom_processor.service.extractor.MetaDataExtractorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +47,7 @@ public class DicomProcessorConfig {
                 .handle("metaDataExtractorService", "prepareMetaData", e -> e.advice(retryAdvice()))
                 .handle("dicomProcessingLogService", "verifyFileInDatabase", e -> e.advice(retryAdvice()))
                 .handle("dicomIOService", "readAndUpdateDicomFile", e -> e.advice(retryAdvice()))
+                .handle("dicomProcessingLogService", "updateLogAndReturnMetaData", e -> e.advice(retryAdvice()))
                 .handle("dicomIOService", "moveDicomFile", e -> e.advice(retryAdvice()))
                 .get();
     }
@@ -73,7 +74,6 @@ public class DicomProcessorConfig {
         return new DirectChannel();
     }
 
-    //create bean RequestHandlerAdvice to redirect error to errorChannel without retry
     @Bean
     public RequestHandlerRetryAdvice retryAdvice() {
         RequestHandlerRetryAdvice retryAdvice = new RequestHandlerRetryAdvice();

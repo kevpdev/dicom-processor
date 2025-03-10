@@ -1,5 +1,7 @@
 package fr.kevpdev.dicom_processor.service;
 
+import fr.kevpdev.dicom_processor.entity.EViewType;
+import fr.kevpdev.dicom_processor.service.rules.DicomMetaDataRulesService;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
@@ -18,18 +20,27 @@ class DicomMetaDataRulesServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"CC", "MLO", "ML"})
-    void shouldIsCompleteMammographyWhenViewPositionIs(String viewPosition) {
+    void shouldGetFullView(String viewPosition) {
         Attributes dataset = new Attributes();
         dataset.setString(Tag.ViewPosition, VR.CS, viewPosition);
-        Assertions.assertTrue(dicomMetaDataRulesService.isCompleteMammography(dataset));
+        Assertions.assertEquals(EViewType.FULL, dicomMetaDataRulesService.getViewType(dataset));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"MLL", "MLA", ""})
-    void shouldIsCompleteMammographyWhenViewPositionIsInvalid(String viewPosition) {
+    @ValueSource(strings = {"SPOT", "MAG"})
+    void shouldGetPartialView(String viewPosition) {
         Attributes dataset = new Attributes();
         dataset.setString(Tag.ViewPosition, VR.CS, viewPosition);
-        Assertions.assertFalse(dicomMetaDataRulesService.isCompleteMammography(dataset));
+        Assertions.assertEquals(EViewType.PARTIAL, dicomMetaDataRulesService.getViewType(dataset));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"MLL", "MLA", "UNKNOWN"})
+    void shouldGetUnknownWhenUnknownOrInvalid(String viewPosition) {
+        Attributes dataset = new Attributes();
+        dataset.setString(Tag.ViewPosition, VR.CS, viewPosition);
+        Assertions.assertEquals(EViewType.UNKNOWN, dicomMetaDataRulesService.getViewType(dataset));
+    }
+
 
 }
