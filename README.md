@@ -11,7 +11,8 @@
 - **Maven** – Gestionnaire de dépendances et build
 - **Docker** – Conteneurisation de l’application
 - **Git / GitHub** – Gestion de version
-- **SLF4J / Logback** – Système de logging
+- **Log4j** – Logger
+- **h2** – Base de données
 
 ---
 
@@ -30,3 +31,17 @@
    ```bash
    git clone https://github.com/kevpdev/dicom-processor.git  
    cd dicom-processor  
+   
+2. Configurer les variables d’environnement :
+   ```bash
+   export DICOM_WATCHER_INPUT_PATH=/chemin/vers/input
+   export DICOM_WATCHER_PROCESSED_PATH=/chemin/vers/processed
+   export DICOM_WATCHER_FAILED_PATH=/chemin/vers/failed
+   export DICOM_WATCHER_LOGO_PATH=/chemin/vers/logo
+   export DICOM_WATCHER_ARCHIVE_PATH=/chemin/vers/archive
+
+
+
+
+ 
+

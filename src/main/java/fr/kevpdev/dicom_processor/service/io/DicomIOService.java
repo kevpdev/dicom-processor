@@ -2,6 +2,8 @@ package fr.kevpdev.dicom_processor.service.io;
 
 import fr.kevpdev.dicom_processor.config.PropertyConfig;
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
+import fr.kevpdev.dicom_processor.entity.EStatus;
+import fr.kevpdev.dicom_processor.entity.EViewType;
 import fr.kevpdev.dicom_processor.exception.DicomFileReadException;
 import fr.kevpdev.dicom_processor.exception.DicomFileWriteException;
 import fr.kevpdev.dicom_processor.factory.DicomInputStreamFactory;
@@ -60,20 +62,24 @@ public class DicomIOService {
     public MetaDataDicomFileDTO readAndUpdateDicomFile(MetaDataDicomFileDTO metaDataDicomFileDTO)
             throws DicomFileReadException {
 
-        File originalFile = metaDataDicomFileDTO.file();
+        File originalFile = metaDataDicomFileDTO.getFile();
 
         try(DicomInputStream dis = dicomInputStreamFactory.createDicomInputStream(originalFile)) {
             Attributes fmi = dis.readFileMetaInformation();
             Attributes dataset = dis.readDataset();
-            boolean isCompleteMammography = dicomMetaDataRulesService.isCompleteMammography(dataset);
+            EViewType viewType = dicomMetaDataRulesService.getViewType(dataset);
+            boolean isFullView = viewType == EViewType.FULL;
+            metaDataDicomFileDTO.setViewType(viewType);
 
-            updateDicomDataset(metaDataDicomFileDTO.file(), dataset, fmi, isCompleteMammography);
+            updateDicomDataset(metaDataDicomFileDTO.getFile(), dataset, fmi, isFullView);
 
             logger.info("End process - Payload {}", metaDataDicomFileDTO);
 
         }catch (IOException e) {
             throw new DicomFileReadException("Error while reading DICOM file " + originalFile.getAbsolutePath(), e);
         }
+
+        metaDataDicomFileDTO.setStatus(EStatus.SUCCESS);
 
         return metaDataDicomFileDTO;
     }
@@ -84,7 +90,7 @@ public class DicomIOService {
      * @param dataset DICOM dataset
      * @param fmi FileMetaInformation
      */
-    public void updateDicomDataset(File originalFile, Attributes dataset, Attributes fmi, boolean isCompleteMammography)
+    public void updateDicomDataset(File originalFile, Attributes dataset, Attributes fmi, boolean isFullView)
             throws DicomFileWriteException {
         logger.debug("UpdateDicomDataset - file : {}", originalFile.getAbsolutePath());
 
@@ -95,7 +101,7 @@ public class DicomIOService {
             dataset.setString(Tag.ImplementationClassUID, VR.UI, "1.2.3.4.56");
             dataset.setString(Tag.ImplementationVersionName, VR.SH, "Hera-MI");
 
-            if(isCompleteMammography) {
+            if(isFullView) {
                 dicomImageService.addLogoImageAndProcessingInfo(dataset);
             }
             dos.writeDataset(fmi, dataset);
@@ -112,18 +118,19 @@ public class DicomIOService {
      * @throws DicomFileWriteException
      */
     public void moveDicomFile(MetaDataDicomFileDTO metaDataDicomFileDTO) throws DicomFileWriteException {
-         moveFileToTargetFolder(metaDataDicomFileDTO.file(), true);
+         moveFileToTargetFolder(metaDataDicomFileDTO.getFile(), false);
     }
 
     /**
-     *  Move file to target folder
-     * @param dicomFileToMove File to move
-     * @param isSuccess true if file is success, false if file is failed
+     * Move file to target folder
+     * @param dicomFileToMove
+     * @param isFailed
      * @throws DicomFileWriteException
      */
-    public void moveFileToTargetFolder(File dicomFileToMove, boolean isSuccess) throws DicomFileWriteException {
-        String targetFolder = isSuccess ? propertyConfig.getDicomProcessedPath() : propertyConfig.getDicomFailedPath();
-        String suffix = isSuccess ? "processed" : "failed";
+    public void moveFileToTargetFolder(File dicomFileToMove, boolean isFailed) throws DicomFileWriteException {
+
+        String targetFolder = isFailed ? propertyConfig.getDicomFailedPath() : propertyConfig.getDicomArchivePath();
+        String suffix = isFailed ? "failed" : null;
 
         moveFileToFolder(dicomFileToMove, targetFolder, suffix);
     }
@@ -137,7 +144,7 @@ public class DicomIOService {
      */
     private void moveFileToFolder(File file, String targetFolder, String suffix) throws DicomFileWriteException {
         Path sourcePath = file.toPath();
-        String newFileName = addSuffixToFileName(file.getName(), suffix);
+        String newFileName = suffix != null ? addSuffixToFileName(file.getName(), suffix) : file.getName();
         Path targetPath = Path.of(targetFolder, newFileName);
 
         try {

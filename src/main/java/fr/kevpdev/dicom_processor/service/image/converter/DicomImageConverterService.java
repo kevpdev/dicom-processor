@@ -66,11 +66,12 @@ public class DicomImageConverterService {
 
             if(bitsAllocated == 16) {
                 newPixelData[2 * index] = (byte) (shortSizeDicomImage[index] & 0xFF);
-                newPixelData[2 * index + 1] = (byte) (shortSizeDicomImage[index] & 0xFF);
+                newPixelData[2 * index + 1] = (byte) ((shortSizeDicomImage[index] >> 8) & 0xFF);
 
             }else if(bitsAllocated == 12) {
                 newPixelData[2 * index] = (byte) ((shortSizeDicomImage[index]) & 0x0F);
                 newPixelData[2 * index + 1] = (byte) ((shortSizeDicomImage[index] >> 8) & 0xFF);
+
 
             }else {
                 throw new UnsupportedOperationException(BITS_ALLOCATED_NOT_SUPPORTED + bitsAllocated);

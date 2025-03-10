@@ -64,8 +64,8 @@ class MetaDataExtractorServiceTest {
 
         MetaDataDicomFileDTO metaDataDicomFileDTO = metaDataExtractorService.prepareMetaData(file);
 
-        Assertions.assertEquals("1.2.826.0.1.3680043.2.1125.1.1.20220125100010", metaDataDicomFileDTO.sopInstanceUID());
-        Assertions.assertEquals(file, metaDataDicomFileDTO.file());
+        Assertions.assertEquals("1.2.826.0.1.3680043.2.1125.1.1.20220125100010", metaDataDicomFileDTO.getSopInstanceUID());
+        Assertions.assertEquals(file, metaDataDicomFileDTO.getFile());
 
         verify(metaDataExtractorService).extractSOPInstanceUIDfromMetaData(file);
 

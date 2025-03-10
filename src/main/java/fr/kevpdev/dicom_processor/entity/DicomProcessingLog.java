@@ -23,8 +23,9 @@ public class DicomProcessingLog {
     @Column(name = "processed_path")
     private String processedPath;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "partial_view")
-    private Boolean partialView;
+    private EViewType partialView;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

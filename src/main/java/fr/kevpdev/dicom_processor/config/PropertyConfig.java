@@ -20,6 +20,9 @@ public class PropertyConfig {
     @Value("${dicom.watcher.failed.path}")
     private String dicomFailedPath;
 
+    @Value("${dicom.watcher.archive.path}")
+    private String dicomArchivePath;
+
 
 
 }

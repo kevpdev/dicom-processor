@@ -1,6 +1,7 @@
 package fr.kevpdev.dicom_processor.handler;
 
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
+import fr.kevpdev.dicom_processor.entity.EStatus;
 import fr.kevpdev.dicom_processor.exception.DicomFileWriteException;
 import fr.kevpdev.dicom_processor.service.DicomProcessingLogService;
 import fr.kevpdev.dicom_processor.service.io.DicomIOService;
@@ -39,12 +40,16 @@ public class DicomErrorHandler {
         }
 
         MetaDataDicomFileDTO metaDataDicomFileDTO = (MetaDataDicomFileDTO) failedMessage.getPayload();
-        String sopInstanceUID = metaDataDicomFileDTO.sopInstanceUID();
+        String sopInstanceUID = metaDataDicomFileDTO.getSopInstanceUID();
         logger.error("SOP Instance UID : {}", sopInstanceUID);
 
         try {
-            dicomProcessingLogService.saveLogWhenFileIsFailed(metaDataDicomFileDTO, errorMessage);
-            dicomIOService.moveFileToTargetFolder(metaDataDicomFileDTO.file(), false);
+
+            MetaDataDicomFileDTO metaDataDicomFileError = new MetaDataDicomFileDTO(metaDataDicomFileDTO.getSopInstanceUID(),
+                    metaDataDicomFileDTO.getFile(), EStatus.ERROR, errorMessage);
+
+            dicomProcessingLogService.updateDicomProcessingLog(metaDataDicomFileError);
+            dicomIOService.moveFileToTargetFolder(metaDataDicomFileDTO.getFile(), false);
         } catch (DicomFileWriteException e) {
             logger.error("Error while moving file to failed folder", e);
         }

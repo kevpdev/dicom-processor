@@ -47,6 +47,7 @@ public class DicomProcessorConfig {
                 .handle("metaDataExtractorService", "prepareMetaData", e -> e.advice(retryAdvice()))
                 .handle("dicomProcessingLogService", "verifyFileInDatabase", e -> e.advice(retryAdvice()))
                 .handle("dicomIOService", "readAndUpdateDicomFile", e -> e.advice(retryAdvice()))
+                .handle("dicomProcessingLogService", "updateLogAndReturnMetaData", e -> e.advice(retryAdvice()))
                 .handle("dicomIOService", "moveDicomFile", e -> e.advice(retryAdvice()))
                 .get();
     }
@@ -73,7 +74,6 @@ public class DicomProcessorConfig {
         return new DirectChannel();
     }
 
-    //create bean RequestHandlerAdvice to redirect error to errorChannel without retry
     @Bean
     public RequestHandlerRetryAdvice retryAdvice() {
         RequestHandlerRetryAdvice retryAdvice = new RequestHandlerRetryAdvice();

@@ -40,8 +40,8 @@ public class DicomImageService {
     public void addLogoImageAndProcessingInfo(Attributes dataset) throws IOException {
 
         byte[] pixelData = dataset.getBytes(Tag.PixelData);
-        BufferedImage logoImage = ImageIO.read(new File(propertyConfig.getDicomLogoPath()));
         int bitsAllocated = dataset.getInt(Tag.BitsAllocated, -1);
+        BufferedImage logoImage = ImageIO.read(new File(propertyConfig.getDicomLogoPath()));
         BufferedImage dicomImage = dicomImageConverterService.convertToBufferedImage(dataset, pixelData, bitsAllocated);
         String laterality = dataset.getString(Tag.Laterality);
         String imageLaterality = dataset.getString(Tag.ImageLaterality);
@@ -53,15 +53,23 @@ public class DicomImageService {
         int x = calculateAxisX(margin, laterality, imageLaterality, dicomImage, logoImage);
         int y = calculateAxisY(margin, dicomImage, logoImage);
 
-
         drawLogoImageToDicomImage(dicomImage, logoImage, x, y, margin);
 
         byte[] newPixelData = dicomImageConverterService.convertBufferedImageToPixelDataByteArray(dicomImage, bitsAllocated);
 
-        dataset.setBytes(Tag.PixelData, VR.OB, newPixelData);
+        dataset.setBytes(Tag.PixelData, getVr(bitsAllocated), newPixelData);
 
     }
 
+    private VR getVr(int bitsAllocated) {
+        VR vr;
+        if(bitsAllocated == 8) {
+            vr = VR.OB;
+        }else {
+            vr = VR.OW;
+        }
+        return vr;
+    }
 
 
     /**
@@ -76,12 +84,16 @@ public class DicomImageService {
         int textMargin = margin/4;
         int yText = y + logoImage.getHeight() + textMargin;
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        String processingDate = "Processing date : " + currentDate;
 
         Graphics2D g2d = dicomImage.createGraphics();
         g2d.drawImage(logoImage, x, y, null);
         g2d.setFont(new Font("Arial", Font.BOLD, 36));
-        g2d.drawString(processingDate, x, yText);
+
+        int lineHeight = g2d.getFontMetrics().getHeight();
+
+        g2d.drawString("Processing date :", x, yText);
+        g2d.drawString(currentDate, x, yText + lineHeight);
+
         g2d.dispose();
     }
 
