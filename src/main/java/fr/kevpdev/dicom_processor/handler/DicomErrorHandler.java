@@ -1,8 +1,10 @@
 package fr.kevpdev.dicom_processor.handler;
 
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
+import fr.kevpdev.dicom_processor.entity.EStatus;
 import fr.kevpdev.dicom_processor.exception.DicomFileWriteException;
-import fr.kevpdev.dicom_processor.service.DicomIOService;
+import fr.kevpdev.dicom_processor.service.DicomProcessingLogService;
+import fr.kevpdev.dicom_processor.service.io.DicomIOService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -15,33 +17,55 @@ public class DicomErrorHandler {
 
     private final DicomIOService dicomIOService;
 
+    private final DicomProcessingLogService dicomProcessingLogService;
+
     private final Logger logger = LogManager.getLogger(DicomErrorHandler.class);
 
-    public DicomErrorHandler(DicomIOService dicomIOService) {
+    public DicomErrorHandler(DicomIOService dicomIOService, DicomProcessingLogService dicomProcessingLogService) {
         this.dicomIOService = dicomIOService;
+        this.dicomProcessingLogService = dicomProcessingLogService;
     }
 
     @ServiceActivator(inputChannel = "errorChannel")
     public void handleError(Message<MessagingException> message) {
-        Throwable exception = message.getPayload();
+        Throwable rootCause = getRootCause(message.getPayload());
+        String errorMessage = rootCause.getMessage();
         Message<?> failedMessage = message.getPayload().getFailedMessage();
-        logger.error("Erreur capturée : {}", exception.getMessage());
 
-        if (failedMessage != null) {
-            logger.error("Message ayant échoué : {}", failedMessage);
-            MetaDataDicomFileDTO metaDataDicomFileDTO = (MetaDataDicomFileDTO) failedMessage.getPayload();
-            String sopInstanceUID = metaDataDicomFileDTO.sopInstanceUID();
-            logger.error("SOP Instance UID : {}", sopInstanceUID);
+        logger.error("captured error :", rootCause);
 
-            // edit and save file in database with error message and status
-            // dicomFileService.save....
-            // move file to error folder
-            try {
-                dicomIOService.moveFileToTargetFolder(metaDataDicomFileDTO.file(), false);
-            } catch (DicomFileWriteException e) {
-                logger.error("Error while moving file to error folder", e);
-            }
+        if (failedMessage == null) {
+            logger.error("Impossible of identify failed message.");
+            return;
+        }
 
+        MetaDataDicomFileDTO metaDataDicomFileDTO = (MetaDataDicomFileDTO) failedMessage.getPayload();
+        String sopInstanceUID = metaDataDicomFileDTO.getSopInstanceUID();
+        logger.error("SOP Instance UID : {}", sopInstanceUID);
+
+        try {
+
+            MetaDataDicomFileDTO metaDataDicomFileError = new MetaDataDicomFileDTO(metaDataDicomFileDTO.getSopInstanceUID(),
+                    metaDataDicomFileDTO.getFile(), EStatus.ERROR, errorMessage);
+
+            dicomProcessingLogService.updateDicomProcessingLog(metaDataDicomFileError);
+            dicomIOService.moveFileToTargetFolder(metaDataDicomFileDTO.getFile(), false);
+        } catch (DicomFileWriteException e) {
+            logger.error("Error while moving file to failed folder", e);
         }
     }
+
+    /**
+     * Get root cause of exception
+     * @param throwable Throwable
+     * @return Throwable
+     */
+    private Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+        }
+        return cause;
+    }
+
 }

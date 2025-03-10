@@ -3,7 +3,8 @@ package fr.kevpdev.dicom_processor.service;
 import fr.kevpdev.dicom_processor.dto.MetaDataDicomFileDTO;
 import fr.kevpdev.dicom_processor.exception.DicomFileReadException;
 import fr.kevpdev.dicom_processor.factory.DicomInputStreamFactory;
-import fr.kevpdev.dicom_processor.service.generators.DicomTestFileGenerator;
+import fr.kevpdev.dicom_processor.service.extractor.MetaDataExtractorService;
+import generators.DicomTestFileGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,8 +64,8 @@ class MetaDataExtractorServiceTest {
 
         MetaDataDicomFileDTO metaDataDicomFileDTO = metaDataExtractorService.prepareMetaData(file);
 
-        Assertions.assertEquals("1.2.826.0.1.3680043.2.1125.1.1.20220125100010", metaDataDicomFileDTO.sopInstanceUID());
-        Assertions.assertEquals(file, metaDataDicomFileDTO.file());
+        Assertions.assertEquals("1.2.826.0.1.3680043.2.1125.1.1.20220125100010", metaDataDicomFileDTO.getSopInstanceUID());
+        Assertions.assertEquals(file, metaDataDicomFileDTO.getFile());
 
         verify(metaDataExtractorService).extractSOPInstanceUIDfromMetaData(file);
 
